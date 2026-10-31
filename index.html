@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#1a1230">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<title>奶蛙快跑 · Naiwa Run</title>
+<link rel="icon" href="assets/favicon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ============ 首页 ============ -->
+  <section class="screen" id="home" data-screen="home">
+    <div class="home-bg"></div>
+    <div class="home-inner">
+      <div class="brand">
+        <div class="brand-sub">DUAL LANE RHYTHM</div>
+        <h1 class="logo"><span class="logo-cn">奶蛙</span><span class="logo-cn logo-accent">快跑</span></h1>
+        <div class="brand-en">N A I W A &nbsp; R U N</div>
+      </div>
+      <div class="home-char">
+        <img id="home-frog" src="assets/char/idle.webp" alt="奶蛙">
+        <div class="home-shadow"></div>
+        <div class="home-sparkles"></div>
+      </div>
+      <nav class="home-menu">
+        <button class="btn btn-primary" data-nav="select" id="btn-start">
+          <span class="btn-ico">▶</span><span class="btn-txt">开始游戏</span><span class="btn-en">PLAY</span>
+        </button>
+        <button class="btn" data-nav="settings"><span class="btn-ico">♪</span><span class="btn-txt">设置</span><span class="btn-en">SETTINGS</span></button>
+        <button class="btn" data-nav="records"><span class="btn-ico">★</span><span class="btn-txt">成绩</span><span class="btn-en">RECORDS</span></button>
+        <button class="btn" data-nav="help"><span class="btn-ico">?</span><span class="btn-txt">玩法</span><span class="btn-en">HOW TO PLAY</span></button>
+      </nav>
+      <div class="home-foot">
+        <span id="home-best">最高分 —</span>
+        <span class="dot">·</span>
+        <span class="muted">键盘 A / S 上轨　K / L 下轨　·　手机左半屏上轨 右半屏下轨</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 选歌 ============ -->
+  <section class="screen" id="select" data-screen="select">
+    <div class="select-bg"></div>
+    <header class="topbar">
+      <button class="icon-btn" data-nav="home" title="返回">←</button>
+      <div class="topbar-title">选择歌曲</div>
+      <div class="tabs" id="song-tabs">
+        <button class="tab active" data-tab="all">全部</button>
+        <button class="tab" data-tab="builtin">内置</button>
+        <button class="tab" data-tab="user">我的音乐</button>
+      </div>
+      <label class="btn btn-ghost upload-btn" title="上传本地音乐">
+        <input type="file" id="file-input" accept="audio/*,.mp3,.wav,.ogg,.m4a,.flac,.aac" hidden>
+        <span class="btn-ico">＋</span><span class="btn-txt">导入音乐</span>
+      </label>
+    </header>
+    <div class="select-body">
+      <div class="song-grid" id="song-grid"></div>
+      <aside class="song-detail" id="song-detail">
+        <div class="detail-cover"><img id="detail-img" alt=""></div>
+        <h2 id="detail-title">选择一首歌</h2>
+        <div id="detail-artist" class="muted">—</div>
+        <div class="detail-meta">
+          <div><b id="detail-bpm">—</b><span>BPM</span></div>
+          <div><b id="detail-time">—</b><span>时长</span></div>
+          <div><b id="detail-notes">—</b><span>音符</span></div>
+        </div>
+        <div class="diff-row" id="diff-row">
+          <button class="diff" data-diff="easy"><b>EASY</b><span id="diff-easy-n">—</span></button>
+          <button class="diff" data-diff="normal"><b>NORMAL</b><span id="diff-normal-n">—</span></button>
+          <button class="diff" data-diff="hard"><b>HARD</b><span id="diff-hard-n">—</span></button>
+        </div>
+        <div class="detail-best" id="detail-best">最高分 —</div>
+        <div class="detail-actions">
+          <button class="btn btn-primary" id="btn-play"><span class="btn-ico">▶</span><span class="btn-txt">开始</span></button>
+          <button class="btn btn-ghost" id="btn-preview"><span class="btn-txt">试听</span></button>
+        </div>
+        <div class="detail-tip muted" id="detail-tip">音符会从右侧飞来，在判定线击打。</div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============ 游戏 ============ -->
+  <section class="screen" id="game" data-screen="game">
+    <canvas id="stage"></canvas>
+    <div class="game-top">
+      <button class="icon-btn pause-btn" id="btn-pause" title="暂停">❚❚</button>
+      <div class="song-now"><span id="g-song">—</span><b id="g-diff">NORMAL</b></div>
+      <div class="progress"><div class="progress-fill" id="g-progress"></div></div>
+    </div>
+    <div class="pause-overlay" id="pause-overlay" hidden>
+      <div class="pause-card">
+        <h2>暂停</h2>
+        <div class="pause-stats" id="pause-stats"></div>
+        <div class="pause-actions">
+          <button class="btn btn-primary" id="btn-resume">继续</button>
+          <button class="btn" id="btn-restart">重来</button>
+          <button class="btn btn-ghost" id="btn-quit">退出</button>
+        </div>
+      </div>
+    </div>
+    <div class="countdown" id="countdown" hidden><span></span></div>
+  </section>
+
+  <!-- ============ 结算 ============ -->
+  <section class="screen" id="result" data-screen="result">
+    <div class="result-bg"></div>
+    <div class="result-wrap">
+      <div class="result-left">
+        <div class="result-grade" id="r-grade">S</div>
+        <div class="result-fc" id="r-fc" hidden>FULL COMBO</div>
+        <div class="result-video">
+          <video id="r-video" src="assets/video/laugh.mp4" muted playsinline loop></video>
+          <audio id="r-audio" src="assets/audio/laugh.mp3" preload="auto"></audio>
+        </div>
+      </div>
+      <div class="result-right">
+        <div class="result-song" id="r-song">—</div>
+        <div class="result-score"><span id="r-score">0</span><small>SCORE</small></div>
+        <div class="result-acc"><span id="r-acc">0.00%</span><small>ACCURACY</small></div>
+        <div class="judge-grid">
+          <div class="j perfect"><b id="r-perfect">0</b><span>PERFECT</span></div>
+          <div class="j great"><b id="r-great">0</b><span>GREAT</span></div>
+          <div class="j good"><b id="r-good">0</b><span>GOOD</span></div>
+          <div class="j miss"><b id="r-miss">0</b><span>MISS</span></div>
+        </div>
+        <div class="result-extra">
+          <div><b id="r-maxcombo">0</b><span>MAX COMBO</span></div>
+          <div><b id="r-notes">0</b><span>音符数</span></div>
+          <div><b id="r-newbest">—</b><span>最高分</span></div>
+        </div>
+        <div class="result-actions">
+          <button class="btn btn-primary" id="btn-again"><span class="btn-ico">↻</span><span class="btn-txt">再来一次</span></button>
+          <button class="btn" data-nav="select"><span class="btn-txt">选歌</span></button>
+          <button class="btn btn-ghost" data-nav="home"><span class="btn-txt">主菜单</span></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 设置 ============ -->
+  <section class="screen" id="settings" data-screen="settings">
+    <header class="topbar">
+      <button class="icon-btn" data-nav="home">←</button>
+      <div class="topbar-title">设置</div>
+    </header>
+    <div class="panel-scroll">
+      <div class="panel">
+        <h3>音量</h3>
+        <div class="slider-row"><label>主音量</label><input type="range" min="0" max="100" id="vol-master"><output id="vol-master-v">80</output></div>
+        <div class="slider-row"><label>背景音乐</label><input type="range" min="0" max="100" id="vol-music"><output id="vol-music-v">80</output></div>
+        <div class="slider-row"><label>打击音效</label><input type="range" min="0" max="100" id="vol-sfx"><output id="vol-sfx-v">25</output></div>
+        <h3>手感</h3>
+        <div class="slider-row"><label>音符速度</label><input type="range" min="1" max="10" id="set-speed"><output id="set-speed-v">5</output></div>
+        <div class="slider-row"><label>音画偏移 (ms)</label><input type="range" min="-200" max="200" step="5" id="set-offset"><output id="set-offset-v">0</output></div>
+        <div class="toggle-row"><label>打击特效</label><button class="switch" id="set-particles"><span></span></button></div>
+        <div class="toggle-row"><label>背景图</label><button class="switch" id="set-bg"><span></span></button></div>
+        <div class="toggle-row"><label>移动端触控区提示</label><button class="switch" id="set-touchhint"><span></span></button></div>
+        <h3>其他</h3>
+        <div class="about muted">《奶蛙快跑》Naiwa Run v1.0 · 全部音乐均在本地处理，不会上传到服务器。<br>奶蛙素材来自本机桌面宠物文件；背景图来自本地图片。</div>
+        <button class="btn btn-ghost danger" id="btn-reset">清空全部成绩</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 成绩 ============ -->
+  <section class="screen" id="records" data-screen="records">
+    <header class="topbar">
+      <button class="icon-btn" data-nav="home">←</button>
+      <div class="topbar-title">历史成绩</div>
+    </header>
+    <div class="panel-scroll">
+      <div class="panel">
+        <div class="records-head"><span>歌曲</span><span>难度</span><span>最高分</span><span>准确率</span><span>最大连击</span><span>评级</span></div>
+        <div id="records-list" class="records-list"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 玩法 ============ -->
+  <section class="screen" id="help" data-screen="help">
+    <header class="topbar">
+      <button class="icon-btn" data-nav="home">←</button>
+      <div class="topbar-title">玩法说明</div>
+    </header>
+    <div class="panel-scroll">
+      <div class="panel help">
+        <h3>基本玩法</h3>
+        <p>音符会沿上下两条轨道从右向左飞来，在它们到达判定线时击打对应的轨道。<b>A / S</b> 打上轨，<b>K / L</b> 打下轨。手机横屏时，<b>左半屏</b>打上轨，<b>右半屏</b>打下轨，可多指同时操作。</p>
+        <h3>音符类型</h3>
+        <ul>
+          <li><b>普通音符</b>：到达判定线时点一下。</li>
+          <li><b>长按音符</b>：长条出现时按住，直到尾巴越过判定线再松开。</li>
+          <li><b>连续音符</b>：同一轨道连续出现，跟着节奏连续敲。</li>
+          <li><b>双轨同时</b>：上下同时来，两只手一起上。</li>
+        </ul>
+        <h3>判定与得分</h3>
+        <p>PERFECT ±45ms、GREAT ±90ms、GOOD ±140ms，超过判定窗即 MISS。连击越长分数越高。</p>
+        <h3>生命值与奶蛙</h3>
+        <p>奶蛙有 <b>300</b> 点生命值（6 格，每格 50）。</p>
+        <ul>
+          <li><b>音符撞到奶蛙</b>（没接住）：生命 −50，连击中断。</li>
+          <li><b>音符被跳过去</b>（你刚好在那一轨出手但时机没对上，奶蛙跃起闪避）：生命不减，但连击中断。</li>
+          <li><b>旋转的奶蛙脸</b>：击打它可以让奶蛙吃掉，回复 <b>+50</b> 生命。</li>
+          <li>生命归零，奶蛙会倒下，本局结束。</li>
+        </ul>
+        <h3>导入自己的音乐</h3>
+        <p>在选歌界面点「导入音乐」，音频只在本机浏览器里解析，不上传。系统会分析 BPM、起音与能量，自动生成 EASY / NORMAL / HARD 三张谱面，并显示 BPM 与音符统计。</p>
+        <h3>关于那首《长征》</h3>
+        <p>你给的 bilibili 文件夹里没有音频文件（文件夹是空的），所以没能把它做成内置曲目。可以用「导入音乐」自行加入。</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="toast" id="toast"></div>
+  <div class="loading" id="loading" hidden>
+    <div class="loading-card">
+      <div class="loading-frog"><img src="assets/char/idle.webp" alt=""></div>
+      <div class="loading-text" id="loading-text">解析中…</div>
+      <div class="loading-bar"><div id="loading-fill"></div></div>
+      <div class="loading-sub muted" id="loading-sub"></div>
+    </div>
+  </div>
+  <div class="rotate-hint" id="rotate-hint">
+    <div class="rotate-inner">
+      <div class="rotate-icon">⟳</div>
+      <b>请把手机横过来</b>
+      <span>《奶蛙快跑》是横屏游戏</span>
+    </div>
+  </div>
+</div>
+<script src="game.js"></script>
+</body>
+</html>
